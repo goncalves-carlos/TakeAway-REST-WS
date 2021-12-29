@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dish Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
+            <h1 class="text-center">Update Dish</h1>
+            <div class="card-body">
+                <form th:action="@{/dishes/{id} (id=${dish.id})}" th:object="${dish}" method="post">
+                    <div class="form-group">
+                        <label>Dish Name</label>
+                        <input type="text" name="name" th:field="*{name}" class="form-control" placeholder="Enter Dish Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Dish Categories</label>
+                        <input type="text" name="categories" th:field="*{categories}" class="form-control" placeholder="Enter Dish Categories">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Dish Name</label>
+                        <input type="text" name="price" th:field="*{price}" class="form-control" placeholder="Enter Dish Price">
+                    </div>
+
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
