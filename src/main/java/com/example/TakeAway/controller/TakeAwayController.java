@@ -1,5 +1,6 @@
 package com.example.TakeAway.controller;
 
+import com.example.TakeAway.model.Address;
 import com.example.TakeAway.model.Dish;
 import com.example.TakeAway.model.Order;
 import com.example.TakeAway.repository.DishRepository;
@@ -96,9 +97,14 @@ public class TakeAwayController {
     public String saveOrder(@PathVariable String id, @ModelAttribute("order") Order order) {
         Order existingOrder = orderRepository.findById(id).get();
         Dish existingDish = repository.findById(existingOrder.getDish_id()).get();
+
         existingOrder.setCustomer_id(order.getCustomer_id());
         existingOrder.setPrice(existingDish.getPrice());
         existingOrder.setFinished(true);
+
+        Address address = order.getAddress();
+        existingOrder.setAddress(address);
+
         orderRepository.save(existingOrder);
         return "redirect:/dishesClient";
     }

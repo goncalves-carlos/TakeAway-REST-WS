@@ -15,17 +15,37 @@
                 <form th:action="@{/dishesClient/{id} (id=${order.id})}" th:object="${order}" method="post">
                     <div class="form-group">
                         <label>Order Id</label>
-                        <input type="text" name="id" th:field="*{id}" class="form-control" placeholder="Enter Dish Name">
+                        <input type="text" name="id" th:field="*{id}" class="form-control" placeholder="Enter Order Id">
                     </div>
 
                     <div class="form-group">
                         <label>Customer Id</label>
-                        <input type="text" name="customer_id" th:field="*{customer_id}" class="form-control" placeholder="Enter Dish Categories">
+                        <input type="text" name="customer_id" th:field="*{customer_id}" class="form-control" placeholder="Enter Customer Id">
                     </div>
 
                     <div class="form-group">
                         <label>Dish Id</label>
                         <input type="text" name="dishes_id" th:field="*{dish_id}" class="form-control" placeholder="Enter Dish Price">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Country</label>
+                        <input type="text" name="country" th:field="*{address.country}" class="form-control" placeholder="Enter Country Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" name="city" th:field="*{address.city}" class="form-control" placeholder="Enter City Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Street</label>
+                        <input type="text" name="street" th:field="*{address.street}" class="form-control" placeholder="Enter Street Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Number</label>
+                        <input type="text" name="number" th:field="*{address.number}" class="form-control" placeholder="Enter House Number">
                     </div>
 
                     <div class="box-footer">
