@@ -29,6 +29,12 @@ public class Order {
         dishes_id.add(dish_id);
     }
 
+    public void removeAll() {
+        dishes_id.clear();
+        numberOfProducts = 0;
+        price = 0.0;
+    }
+
     public void removeDish(String dish_id) {
         dishes_id.remove(dish_id);
         numberOfProducts--;

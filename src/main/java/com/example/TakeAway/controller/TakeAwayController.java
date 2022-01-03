@@ -36,13 +36,14 @@ public class TakeAwayController {
     @GetMapping("/login/insert")
     public String goToWS(@ModelAttribute("user") User user, Model model) {
         System.out.println(userRepository.findByUsernameEqualsAndPasswordEquals(user.getUsername(), user.getPassword()));
-        String msg = userRepository.findByUsernameEqualsAndPasswordEquals(user.getUsername(), user.getPassword()).toString();
-        if (msg.equals("Optional.empty")) {
+        String msgLogin = userRepository.findByUsernameEqualsAndPasswordEquals(user.getUsername(), user.getPassword()).toString();
+        if (msgLogin.equals("Optional.empty")) {
             return "login";
         }
 
         User existingUser = userRepository.findByUsernameEqualsAndPasswordEquals(user.getUsername(), user.getPassword()).get();
 
+        String msgOrder = orderRepository.findOrderByFinishedIsFalse().toString();
         if (existingUser.getUserType().equals("client")) {
             System.out.println(repository.findAllByCategoriesEquals("OPENER"));
             System.out.println("new line baby");
@@ -50,7 +51,13 @@ public class TakeAwayController {
             model.addAttribute("dishesOpener", repository.findAllByCategoriesEquals("OPENER"));
             model.addAttribute("dishesMain", repository.findAllByCategoriesEquals("MAIN"));
             model.addAttribute("dishesDesert", repository.findAllByCategoriesEquals("DESERT"));
-            Order order = new Order();
+            Order order;
+            if (msgOrder.equals("Optional.empty")) {
+                order = new Order();
+            } else {
+                order = orderRepository.findOrderByFinished(false).get();
+                order.removeAll();
+            }
             order.setCustomer_id(existingUser.getId());
             orderRepository.save(order);
             return "index";
