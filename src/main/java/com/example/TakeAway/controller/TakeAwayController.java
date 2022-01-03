@@ -12,9 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-
 @Controller
 public class TakeAwayController {
     @Autowired
@@ -28,14 +25,28 @@ public class TakeAwayController {
     /* Login */
     /* ***** */
 
+    /*
+
+    * This function send us to the login page where we have to insert the credentials.
+
+    */
     @GetMapping("/login")
     public String login() {
         return "login";
     }
 
+    /*
+
+    * This function takes the credentials and first check if the user exist.
+    * If the user exist then we check if it is a client or an owner. If it does next exist that we stay in the login page.
+    * Next part we check if it is a client or an owner. If it is an owner we will be sent to the "/dishes" page.
+    * If we are a client then we will be sent to the "/dishesClient" page.
+    * If we are a client then we check if an unfinished order exist. If it is the case then we take it and reset it.
+    * If it is not the case then we create a new one.
+
+    */
     @GetMapping("/login/insert")
     public String goToWS(@ModelAttribute("user") User user, Model model) {
-        System.out.println(userRepository.findByUsernameEqualsAndPasswordEquals(user.getUsername(), user.getPassword()));
         String msgLogin = userRepository.findByUsernameEqualsAndPasswordEquals(user.getUsername(), user.getPassword()).toString();
         if (msgLogin.equals("Optional.empty")) {
             return "login";
@@ -45,9 +56,6 @@ public class TakeAwayController {
 
         String msgOrder = orderRepository.findOrderByFinishedIsFalse().toString();
         if (existingUser.getUserType().equals("client")) {
-            System.out.println(repository.findAllByCategoriesEquals("OPENER"));
-            System.out.println("new line baby");
-            System.out.println(repository.findAll());
             model.addAttribute("dishesOpener", repository.findAllByCategoriesEquals("OPENER"));
             model.addAttribute("dishesMain", repository.findAllByCategoriesEquals("MAIN"));
             model.addAttribute("dishesDesert", repository.findAllByCategoriesEquals("DESERT"));
@@ -73,14 +81,22 @@ public class TakeAwayController {
     /* Owner View */
     /* ********** */
 
-    // this function makes us go to the html file where the owner can add, update or delete a dish
+    /*
+
+    * This function makes us go to the html file where the owner can add, update or delete a dish.
+
+    */
     @GetMapping("/dishes")
     public String listDishes(Model model) {
         model.addAttribute("dishes", repository.findAll());
         return "dishes";
     }
 
-    // this function makes us go to the html file where we add information to add the dish to the collection
+    /*
+
+    * This function makes us go to the html file where we add information to add the dish to the collection.
+
+    */
     @GetMapping("/dishes/new")
     public String createDishForm(Model model) {
         Dish dish = new Dish();
@@ -88,21 +104,33 @@ public class TakeAwayController {
         return "create_dish";
     }
 
-    // this function stores the added dish into to collection and we will return to the main page of the owner
+    /*
+
+    * This function stores the added dish into to collection and we will return to the main page of the owner.
+
+    */
     @PostMapping("/dishes")
     public String saveDish(@ModelAttribute("dish") Dish dish) {
         repository.save(dish);
         return "redirect:/dishes";
     }
 
-    // this function makes us go to the html file where we update/change the existing dish from the collection
+    /*
+
+    * This function makes us go to the html file where we update/change the existing dish from the collection.
+
+    */
     @GetMapping("/dishes/edit/{id}")
     public String editDishForm(@PathVariable String id, Model model) {
         model.addAttribute("dish", repository.findById(id).get());
         return "edit_dish";
     }
 
-    // this function stores the updates/changed dish into to collection, and we will return to the main page of the owner
+    /*
+
+    * This function stores the updates/changed dish into to collection, and we will return to the main page of the owner.
+
+    */
     @PostMapping("/dishes/{id}")
     public String updateDish(@PathVariable String id, @ModelAttribute("dish") Dish dish) {
         Dish existingDish = repository.findById(id).get();
@@ -113,7 +141,11 @@ public class TakeAwayController {
         return "redirect:/dishes";
     }
 
-    // this function deletes a Dish from the collection
+    /*
+
+    * This function deletes a Dish from the collection.
+
+    */
     @GetMapping("/dishes/{id}")
     public String deleteDish(@PathVariable String id) {
         repository.deleteById(id);
@@ -124,7 +156,11 @@ public class TakeAwayController {
     /* Client View */
     /* *********** */
 
-    // this function send us to the html where the client can see and order the dishes
+    /*
+
+    * This function send us to the html where the client can see and order the dishes.
+
+    */
     @GetMapping("/dishesClient")
     public String listDishesClient(Model model) {
         model.addAttribute("dishesOpener", repository.findAllByCategoriesEquals("OPENER"));
@@ -133,23 +169,13 @@ public class TakeAwayController {
         return "index";
     }
 
-    @GetMapping("/dishesClient/newOrder/{id}")
-    public String createOrderForm(@PathVariable String id, Model model) {
-        System.out.println(orderRepository.findOrderByFinished(false) + " - " + orderRepository.findOrderByFinishedIsFalse());
-        String msg = orderRepository.findOrderByFinishedIsFalse().toString();
-        System.out.println(msg);
-        Order order;
-        if (msg.equals("Optional.empty")) {
-            order = new Order();
-        } else {
-            order = orderRepository.findOrderByFinished(false).get();
-        }
-        order.setDish_id(id);
-        orderRepository.save(order);
-        model.addAttribute("order", order);
-        return "create_order";
-    }
+    /*
 
+    * This function send the dish to the order.
+    * First it checks if an unfinished order exists. If not create one and add the dish to the order.
+    * If it does then we add the dish to the order.
+
+    */
     @GetMapping("/dishesClient/addToCart/{id}")
     public String addToCart(@PathVariable String id, Model model) {
         String msg = orderRepository.findOrderByFinishedIsFalse().toString();
@@ -162,7 +188,6 @@ public class TakeAwayController {
         order.setDish_id(id);
         order.addDish(id);
         order.addTotal(repository.findById(id).get().getPrice());
-        //order.setPrice(order.setTotal(repository.findById(id).get().getPrice()));
         orderRepository.save(order);
         model.addAttribute("orders", order);
         model.addAttribute("dishesOpener", repository.findAllByCategoriesEquals("OPENER"));
@@ -171,9 +196,15 @@ public class TakeAwayController {
         return "index";
     }
 
+    /*
+
+    * This function deletes a dish from an order.
+    * First it checks if an order exist and then checks if the dish is in the order.
+    * If it is that it will be removed. If not than nothing happens.
+
+    */
     @GetMapping("dishesClient/{id}")
     public String deleteFromCart(@PathVariable String id, Model model) {
-        String msg = orderRepository.findOrderByFinishedIsFalse().toString();
         Order order = orderRepository.findOrderByFinished(false).get();
         System.out.println(order.DishExist(id));
         if (order.DishExist(id)) {
@@ -188,15 +219,26 @@ public class TakeAwayController {
         return "/index";
     }
 
+    /*
+
+    * This function send us to a page where we will finalize the order.
+
+    */
     @GetMapping("/dishesClient/placeOrder")
     public String placeOrder(Model model) {
-        String msg = orderRepository.findOrderByFinishedIsFalse().toString();
         Order order = orderRepository.findOrderByFinished(false).get();
         model.addAttribute("order", order);
 
         return "create_order";
     }
 
+    /*
+
+    * This function takes the information from the page which is the address
+    * It will then store the information to the document.
+    * To finish of it will then make the order finished by turing the variable isFinished to "true".
+
+    */
     @PostMapping("/dishesClient/{id}")
     public String saveOrder(@PathVariable String id, @ModelAttribute("order") Order order) {
         Order existingOrder = orderRepository.findById(id).get();
@@ -212,23 +254,4 @@ public class TakeAwayController {
         orderRepository.save(existingOrder);
         return "redirect:/dishesClient";
     }
-    /*
-    @PostMapping("/addDish")
-    public String saveDish(@RequestBody Dish dish) {
-        repository.save(dish);
-        return "Added Dish with id: " + dish.getId();
-    }
-
-    @GetMapping("/findAllDishes")
-    public List<Dish> getDishes() {
-        return repository.findAll();
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public String deleteDish(@PathVariable String id) {
-        repository.deleteById(id);
-        return "Dish deleted with id: " + id;
-    }
-
-     */
 }
