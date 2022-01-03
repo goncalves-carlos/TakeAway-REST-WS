@@ -29,6 +29,9 @@ we will be sent back to the "/dishesClient" page and can place a new order.
 
 ## Technical Information
 
+This project has three packages. Controller, Model and Repository. In the directory templates I have all the html files
+that are used for this project.
+
 In the login we check if the credentials are correct. If so then we look at the userType of the user to see if it is a client
 or an owner. Depending on the type the user will be sent to its correct page.
 
