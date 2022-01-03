@@ -3,6 +3,7 @@ package com.example.TakeAway.controller;
 import com.example.TakeAway.model.Address;
 import com.example.TakeAway.model.Dish;
 import com.example.TakeAway.model.Order;
+import com.example.TakeAway.model.User;
 import com.example.TakeAway.repository.DishRepository;
 import com.example.TakeAway.repository.OrderRepository;
 import com.example.TakeAway.repository.UserRepository;
@@ -23,7 +24,42 @@ public class TakeAwayController {
     @Autowired
     UserRepository userRepository;
 
-    // Owner View
+    /* ***** */
+    /* Login */
+    /* ***** */
+
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
+    @GetMapping("/login/insert")
+    public String goToWS(@ModelAttribute("user") User user, Model model) {
+        System.out.println(userRepository.findByUsernameEqualsAndPasswordEquals(user.getUsername(), user.getPassword()));
+        String msg = userRepository.findByUsernameEqualsAndPasswordEquals(user.getUsername(), user.getPassword()).toString();
+        if (msg.equals("Optional.empty")) {
+            return "login";
+        }
+
+        User existingUser = userRepository.findByUsernameEqualsAndPasswordEquals(user.getUsername(), user.getPassword()).get();
+
+        if (existingUser.getUserType().equals("client")) {
+            model.addAttribute("dishes", repository.findAll());
+            Order order = new Order();
+            order.setCustomer_id(existingUser.getId());
+            orderRepository.save(order);
+            return "index";
+        } else if (existingUser.getUserType().equals("owner")) {
+            model.addAttribute("dishes", repository.findAll());
+            return "dishes";
+        }
+
+        return "login";
+    }
+
+    /* ********** */
+    /* Owner View */
+    /* ********** */
 
     @GetMapping("/dishes")
     public String listDishes(Model model) {
@@ -66,7 +102,9 @@ public class TakeAwayController {
         return "redirect:/dishes";
     }
 
-    // Client View
+    /* *********** */
+    /* Client View */
+    /* *********** */
 
     @GetMapping("/dishesClient")
     public String listDishesClient(Model model) {
@@ -82,13 +120,11 @@ public class TakeAwayController {
         Order order;
         if (msg.equals("Optional.empty")) {
             order = new Order();
-            order.setDish_id(id);
-            orderRepository.save(order);
         } else {
             order = orderRepository.findOrderByFinished(false).get();
-            order.setDish_id(id);
-            orderRepository.save(order);
         }
+        order.setDish_id(id);
+        orderRepository.save(order);
         model.addAttribute("order", order);
         return "create_order";
     }
