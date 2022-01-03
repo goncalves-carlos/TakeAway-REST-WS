@@ -53,7 +53,8 @@
                         <div class="card-body">
                             <h5 class="card-title" th:text = "${dish.price}"></h5>
                             <div class="col-4 padding-0">
-                                <a th:href = @{/dishesClient/newOrder/{id}(id=${dish.id})} class="btn btn-primary">Add To Cart</a>
+                                <a th:href = @{/dishesClient/addToCart/{id}(id=${dish.id})} class="btn btn-primary">Add To Cart</a>
+                                <a th:href = @{/dishesClient/{id}(id=${dish.id})} class="btn btn-primary">Delete From Cart</a>
                             </div>
                         </div>
                     </div>
@@ -71,7 +72,8 @@
                         <div class="card-body">
                             <h5 class="card-title" th:text = "${dish.price}"></h5>
                             <div class="col-4 padding-0">
-                                <a th:href = @{/dishesClient/newOrder/{id}(id=${dish.id})} class="btn btn-primary">Add To Cart</a>
+                                <a th:href = @{/dishesClient/addToCart/{id}(id=${dish.id})} class="btn btn-primary">Add To Cart</a>
+                                <a th:href = @{/dishesClient/{id}(id=${dish.id})} class="btn btn-primary">Delete From Cart</a>
                             </div>
                         </div>
                     </div>
@@ -89,7 +91,8 @@
                         <div class="card-body">
                             <h5 class="card-title" th:text = "${dish.price}"></h5>
                             <div class="col-4 padding-0">
-                                <a th:href = @{/dishesClient/newOrder/{id}(id=${dish.id})} class="btn btn-primary">Add To Cart</a>
+                                <a th:href = @{/dishesClient/addToCart/{id}(id=${dish.id})} class="btn btn-primary">Add To Cart</a>
+                                <a th:href = @{/dishesClient/{id}(id=${dish.id})} class="btn btn-primary">Delete From Cart</a>
                             </div>
                         </div>
                     </div>
@@ -97,17 +100,13 @@
             </div>
         </div>
         <div class="column right">
-            <div class="card text-white bg-danger mb-3" style="max-width:18rem;">
+            <div class="card text-white bg-danger mb-3" th:each="order: ${orders}" style="max-width:18rem;">
                 <div class="card-header text-center">Shopping Cart</div>
                 <div class="card-body">
-                    <h5 class="card-title">Total: </h5>
+                    <h5 class="card-title">Total: <span th:text="${order.price}"></span></h5>
                     <hr>
-                    <h6 class="card-title">Item bought:</h6>
-
-                    <ul>
-                        <li></li>
-                    </ul>
-                    <button class="btn btn-light btn-block">Checkout</button>
+                    <h6 class="card-title">Items bought: <span th:text="${order.numberOfProducts}"></span></h6>
+                    <a th:href = @{/dishesClient/placeOrder} class="btn btn-light btn-block">Checkout</a>
                 </div>
             </div>
         </div>

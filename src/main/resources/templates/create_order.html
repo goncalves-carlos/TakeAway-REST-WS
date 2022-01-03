@@ -15,17 +15,20 @@
                 <form th:action="@{/dishesClient/{id} (id=${order.id})}" th:object="${order}" method="post">
                     <div class="form-group">
                         <label>Order Id</label>
-                        <input type="text" name="id" th:field="*{id}" class="form-control" placeholder="Enter Order Id">
+                        <input type="text" name="id" th:field="*{id}" class="form-control" readonly="readonly" placeholder="Enter Order Id">
                     </div>
 
                     <div class="form-group">
                         <label>Customer Id</label>
-                        <input type="text" name="customer_id" th:field="*{customer_id}" class="form-control" placeholder="Enter Customer Id">
+                        <input type="text" name="customer_id" th:field="*{customer_id}" class="form-control" readonly="readonly" placeholder="Enter Customer Id">
                     </div>
 
                     <div class="form-group">
-                        <label>Dish Id</label>
-                        <input type="text" name="dishes_id" th:field="*{dish_id}" class="form-control" placeholder="Enter Dish Price">
+                        <label>Total Price: <span th:text="${order.price}"></span></label>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Total Products: <span th:text="${order.numberOfProducts}"></span></label>
                     </div>
 
                     <div class="form-group">

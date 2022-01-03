@@ -66,12 +66,14 @@ public class TakeAwayController {
     /* Owner View */
     /* ********** */
 
+    // this function makes us go to the html file where the owner can add, update or delete a dish
     @GetMapping("/dishes")
     public String listDishes(Model model) {
         model.addAttribute("dishes", repository.findAll());
         return "dishes";
     }
 
+    // this function makes us go to the html file where we add information to add the dish to the collection
     @GetMapping("/dishes/new")
     public String createDishForm(Model model) {
         Dish dish = new Dish();
@@ -79,18 +81,21 @@ public class TakeAwayController {
         return "create_dish";
     }
 
+    // this function stores the added dish into to collection and we will return to the main page of the owner
     @PostMapping("/dishes")
     public String saveDish(@ModelAttribute("dish") Dish dish) {
         repository.save(dish);
         return "redirect:/dishes";
     }
 
+    // this function makes us go to the html file where we update/change the existing dish from the collection
     @GetMapping("/dishes/edit/{id}")
     public String editDishForm(@PathVariable String id, Model model) {
         model.addAttribute("dish", repository.findById(id).get());
         return "edit_dish";
     }
 
+    // this function stores the updates/changed dish into to collection, and we will return to the main page of the owner
     @PostMapping("/dishes/{id}")
     public String updateDish(@PathVariable String id, @ModelAttribute("dish") Dish dish) {
         Dish existingDish = repository.findById(id).get();
@@ -101,6 +106,7 @@ public class TakeAwayController {
         return "redirect:/dishes";
     }
 
+    // this function deletes a Dish from the collection
     @GetMapping("/dishes/{id}")
     public String deleteDish(@PathVariable String id) {
         repository.deleteById(id);
@@ -111,6 +117,7 @@ public class TakeAwayController {
     /* Client View */
     /* *********** */
 
+    // this function send us to the html where the client can see and order the dishes
     @GetMapping("/dishesClient")
     public String listDishesClient(Model model) {
         model.addAttribute("dishesOpener", repository.findAllByCategoriesEquals("OPENER"));
@@ -133,6 +140,53 @@ public class TakeAwayController {
         order.setDish_id(id);
         orderRepository.save(order);
         model.addAttribute("order", order);
+        return "create_order";
+    }
+
+    @GetMapping("/dishesClient/addToCart/{id}")
+    public String addToCart(@PathVariable String id, Model model) {
+        String msg = orderRepository.findOrderByFinishedIsFalse().toString();
+        Order order;
+        if (msg.equals("Optional.empty")) {
+            order = new Order();
+        } else {
+            order = orderRepository.findOrderByFinished(false).get();
+        }
+        order.setDish_id(id);
+        order.addDish(id);
+        order.addTotal(repository.findById(id).get().getPrice());
+        //order.setPrice(order.setTotal(repository.findById(id).get().getPrice()));
+        orderRepository.save(order);
+        model.addAttribute("orders", order);
+        model.addAttribute("dishesOpener", repository.findAllByCategoriesEquals("OPENER"));
+        model.addAttribute("dishesMain", repository.findAllByCategoriesEquals("MAIN"));
+        model.addAttribute("dishesDesert", repository.findAllByCategoriesEquals("DESERT"));
+        return "index";
+    }
+
+    @GetMapping("dishesClient/{id}")
+    public String deleteFromCart(@PathVariable String id, Model model) {
+        String msg = orderRepository.findOrderByFinishedIsFalse().toString();
+        Order order = orderRepository.findOrderByFinished(false).get();
+        System.out.println(order.DishExist(id));
+        if (order.DishExist(id)) {
+            order.removeDish(id);
+            order.subTotal(repository.findById(id).get().getPrice());
+            orderRepository.save(order);
+        }
+        model.addAttribute("orders", order);
+        model.addAttribute("dishesOpener", repository.findAllByCategoriesEquals("OPENER"));
+        model.addAttribute("dishesMain", repository.findAllByCategoriesEquals("MAIN"));
+        model.addAttribute("dishesDesert", repository.findAllByCategoriesEquals("DESERT"));
+        return "/index";
+    }
+
+    @GetMapping("/dishesClient/placeOrder")
+    public String placeOrder(Model model) {
+        String msg = orderRepository.findOrderByFinishedIsFalse().toString();
+        Order order = orderRepository.findOrderByFinished(false).get();
+        model.addAttribute("order", order);
+
         return "create_order";
     }
 
