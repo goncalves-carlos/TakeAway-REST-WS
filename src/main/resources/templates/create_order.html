@@ -23,13 +23,15 @@
                         <input type="text" name="customer_id" th:field="*{customer_id}" class="form-control" readonly="readonly" placeholder="Enter Customer Id">
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="margin-top: 10px">
                         <label>Total Price: <span th:text="${order.price}"></span></label>
                     </div>
 
                     <div class="form-group">
                         <label>Total Products: <span th:text="${order.numberOfProducts}"></span></label>
                     </div>
+
+                    <hr>
 
                     <div class="form-group">
                         <label>Country</label>
@@ -52,7 +54,7 @@
                     </div>
 
                     <div class="box-footer">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" style="margin-top: 10px">
                             Submit
                         </button>
                     </div>
