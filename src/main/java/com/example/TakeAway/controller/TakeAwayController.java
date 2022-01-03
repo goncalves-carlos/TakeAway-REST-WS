@@ -44,7 +44,12 @@ public class TakeAwayController {
         User existingUser = userRepository.findByUsernameEqualsAndPasswordEquals(user.getUsername(), user.getPassword()).get();
 
         if (existingUser.getUserType().equals("client")) {
-            model.addAttribute("dishes", repository.findAll());
+            System.out.println(repository.findAllByCategoriesEquals("OPENER"));
+            System.out.println("new line baby");
+            System.out.println(repository.findAll());
+            model.addAttribute("dishesOpener", repository.findAllByCategoriesEquals("OPENER"));
+            model.addAttribute("dishesMain", repository.findAllByCategoriesEquals("MAIN"));
+            model.addAttribute("dishesDesert", repository.findAllByCategoriesEquals("DESERT"));
             Order order = new Order();
             order.setCustomer_id(existingUser.getId());
             orderRepository.save(order);
@@ -108,7 +113,9 @@ public class TakeAwayController {
 
     @GetMapping("/dishesClient")
     public String listDishesClient(Model model) {
-        model.addAttribute("dishes", repository.findAll());
+        model.addAttribute("dishesOpener", repository.findAllByCategoriesEquals("OPENER"));
+        model.addAttribute("dishesMain", repository.findAllByCategoriesEquals("MAIN"));
+        model.addAttribute("dishesDesert", repository.findAllByCategoriesEquals("DESERT"));
         return "index";
     }
 
